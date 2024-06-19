@@ -2,6 +2,7 @@ package one.digitalinnovation.gof.service.impl;
 
 import java.util.Optional;
 
+import org.springdoc.api.OpenApiResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,16 +54,17 @@ public class ClienteServiceImpl implements ClienteService {
 
 	@Override
 	public void atualizar(Long id, Cliente cliente) {
-		// Buscar Cliente por ID, caso exista:
-		Optional<Cliente> clienteBd = clienteRepository.findById(id);
-		if (clienteBd.isPresent()) {
-			salvarClienteComCep(cliente);
+		if (!clienteRepository.existsById(id)) {
+			throw new OpenApiResourceNotFoundException("Cliente não encontrado");
 		}
+		clienteRepository.save(cliente);
 	}
 
 	@Override
 	public void deletar(Long id) {
-		// Deletar Cliente por ID.
+		if (!clienteRepository.existsById(id)) {
+			throw new OpenApiResourceNotFoundException("Cliente não encontrado");
+		}
 		clienteRepository.deleteById(id);
 	}
 
